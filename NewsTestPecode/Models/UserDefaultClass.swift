@@ -4,19 +4,16 @@ class UserDefaultClass: UserDefaultProtocol {
     let defaults = UserDefaults.standard
     
     func setFilters(filters: Filters) {
-
-        for (index,i) in filters.filters.enumerated() {
+        for index in filters.filters {
             var arrayList: [String] = []
             var arrayListCheck: [Bool] = []
-            for j in 0..<i.list.count {
-                arrayList.append(i.list[j])
-                arrayListCheck.append(i.listCheck[j])
-//                (dict[i.list[j]] = i.listCheck[j])
+            for j in 0..<index.list.count {
+                arrayList.append(index.list[j])
+                arrayListCheck.append(index.listCheck[j])
             }
-            defaults.set(arrayList, forKey: i.title + " arrayList")
-            defaults.set(arrayListCheck, forKey: i.title + " arrayListCheck")
+            defaults.set(arrayList, forKey: index.title + " arrayList")
+            defaults.set(arrayListCheck, forKey: index.title + " arrayListCheck")
         }
-        print(filters.filters[1].listCheck)
     }
     
     func readSavedFilters(titles: [String]) -> Filters {
@@ -26,17 +23,7 @@ class UserDefaultClass: UserDefaultProtocol {
             guard let arrayListCheck = defaults.object(forKey: title + " arrayListCheck") as? [Bool] else { continue }
             savedFilters.filters.first(where: { $0.title == title })?.list = arrayList
             savedFilters.filters.first(where: { $0.title == title })?.listCheck = arrayListCheck
-            
-//            if let savedDict = defaults.object(forKey: title) as? [String: Bool] {
-//                for i in savedDict {
-//                    savedFilters.filters.first(where: { $0.title == title })?.list.append(i.key)
-//                    savedFilters.filters.first(where: { $0.title == title })?.listCheck.append(i.value)
-//                }
-////                savedFilters.filters.first(where: { $0.title == title })?.list = savedDict
-////                savedFilters.filters.first(where: { $0.title == title })?.listCheck = savedArray
-//            }
         }
-        print(savedFilters.filters[1].listCheck)
         return savedFilters
     }
     

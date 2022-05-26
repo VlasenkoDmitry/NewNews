@@ -16,9 +16,7 @@ class LoadingViewController: UIViewController {
     
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-//      userDefaultBase.clearFilters()
-
-        
+        //      userDefaultBase.clearFilters()
         
         downloadSourcesList { sourcesList, error  in
             if sourcesList == sourcesList {

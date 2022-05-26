@@ -6,12 +6,11 @@ class MainTableViewCell: UITableViewCell {
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-
+        
     }
     
     func configure(dataNews: DataCellTable, index: Int) {
         customView = CellTableViewXIBClass.instanceFromNib(cell: dataNews)
-        customView.frame = CGRect(x: 16, y: 10, width: self.frame.size.width - 32, height: self.frame.size.height - 20)
         customView.notesBotton.setImage(UIImage(systemName: "bookmark.fill")?.withTintColor(.white, renderingMode: .alwaysOriginal), for: .selected)
         customView.notesBotton.setImage(UIImage(systemName: "bookmark")?.withTintColor(.white, renderingMode: .alwaysOriginal), for: .normal)
         customView.notesBotton.tag = index
@@ -35,8 +34,7 @@ class MainTableViewCell: UITableViewCell {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-//        likeButton.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
-        
+        customView.frame = CGRect(x: 16, y: 10, width: self.frame.size.width - 32, height: self.frame.size.height - 20)
     }
 }
 

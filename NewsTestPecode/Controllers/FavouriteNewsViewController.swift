@@ -7,7 +7,6 @@ class FavouriteNewsViewController: UIViewController {
     @IBOutlet weak var tableview: UITableView!
     
     weak var delegate: FavouriteNewsViewControllerDelegate?
-//    private var arrayTitlesFavouriteNews: [String] = []
     private var arrayNews: [NewsRealmData] = []
     var databaseRealm: RealmClass?
     
@@ -31,9 +30,6 @@ class FavouriteNewsViewController: UIViewController {
         if let arrayNews = databaseRealm?.getAllObjectsNewsRealmData() {
             self.arrayNews = arrayNews
         }
-//        arrayNews = databaseRealm?.getAllObjectsNewsRealmData()
-//        guard let titles = databaseRealm?.takeAllTitles() else { return }
-//        arrayTitlesFavouriteNews = titles
     }
 }
 

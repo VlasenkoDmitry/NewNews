@@ -159,8 +159,8 @@
 		E1502AD8282FC1B6005D18B7 /* Networking */ = {
 			isa = PBXGroup;
 			children = (
-				E1502ADF282FC247005D18B7 /* Service */,
 				E1502ADE282FC20E005D18B7 /* Manager */,
+				E1502ADF282FC247005D18B7 /* Service */,
 				E1502ADB282FC1D3005D18B7 /* Encoding */,
 			);
 			path = Networking;
@@ -185,10 +185,10 @@
 		E1502ADF282FC247005D18B7 /* Service */ = {
 			isa = PBXGroup;
 			children = (
-				E1502AE2282FC295005D18B7 /* EndPointType.swift */,
 				E1502AE0282FC258005D18B7 /* APIRequestManager.swift */,
 				E1D653652834E228003B1AB8 /* HTTPMethod.swift */,
 				E1D653672834F4A0003B1AB8 /* Router.swift */,
+				E1502AE2282FC295005D18B7 /* EndPointType.swift */,
 			);
 			path = Service;
 			sourceTree = "<group>";

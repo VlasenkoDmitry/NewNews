@@ -57,15 +57,11 @@ extension FiltersViewController: UITableViewDelegate, UITableViewDataSource{
         let section = models[section]
         return section.title
     }
-
+    
     func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
         let section = models[section]
         return section.footer
     }
-//
-//    func tableView(_ tableView: UITableView, willDisplayFooterView view: UIView, forSection section: Int) {
-//        view.backgroundColor = .green
-//    }
     
     func tableView(_ tableView: UITableView, willDisplayFooterView view: UIView, forSection section: Int) {
         (view as! UITableViewHeaderFooterView).contentView.backgroundColor = UIColor.black.withAlphaComponent(0.4)
@@ -79,7 +75,7 @@ extension FiltersViewController: UITableViewDelegate, UITableViewDataSource{
             return 0
         }
     }
-   
+    
     func numberOfSections(in tableView: UITableView) -> Int {
         return models.count
     }
@@ -88,7 +84,6 @@ extension FiltersViewController: UITableViewDelegate, UITableViewDataSource{
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "FitlersTableViewCell", for: indexPath) as? FitlersTableViewCell else { return UITableViewCell () }
         let model = models[indexPath.section].options[indexPath.row]
         cell.configure(model: model)
-//        contentView.superview?.backgroundColor = .green
         return cell
     }
     
@@ -99,7 +94,6 @@ extension FiltersViewController: UITableViewDelegate, UITableViewDataSource{
         model.handler()
         guard let controler = self.storyboard?.instantiateViewController(identifier: "SeparateFilterViewController") as? SeparateFilterViewController else { return }
         controler.delegate = self
-        print(activeFilter)
         controler.filter = activeFilter
         self.navigationController?.pushViewController(controler, animated: true)
     }
@@ -109,6 +103,5 @@ extension FiltersViewController: SeparateFilterViewControllerDelegate {
     func setSettingsFromSeparateFilterViewController(updatedFilter: Filter) {
         filters.updateFilters(changedFilter: updatedFilter)
         userDefaultBase.setFilters(filters: filters)
-        //        filters.filters = userDefaultBase.readSavedFilters(arrayFilters: filters.filters)
     }
 }

@@ -24,12 +24,12 @@ class CellTableViewXIBClass: UIView {
         manager.downloadImage(link: cell.imageLink, completion: { result in
             if let result = result {
                 cell.image = result
-                DispatchQueue.main.sync {
+                DispatchQueue.main.async {
                     guard let data = cell.image else { return }
                     xib.imageView.image = UIImage(data: data)
                 }
             } else {
-                DispatchQueue.main.sync {
+                DispatchQueue.main.async {
                     xib.imageView.image = UIImage(named: "placeholder")
                 }
             }

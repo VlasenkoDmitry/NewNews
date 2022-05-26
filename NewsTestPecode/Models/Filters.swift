@@ -78,12 +78,8 @@ class Filters {
     }
     
     func updateSoures(downloadedListSources: [String]) {
-        print(downloadedListSources)
-        
         guard let oldList = filters.first(where: { $0.title == ParametrsRequestNewsApi.sources.rawValue })?.list else { return }
-        print(oldList)
         guard let oldCheckList = filters.first(where: { $0.title == ParametrsRequestNewsApi.sources.rawValue })?.listCheck else { return }
-        print(oldCheckList)
         var resultList: [String] = []
         var resultCheckList: [Bool] = []
         for source in downloadedListSources {
@@ -91,7 +87,6 @@ class Filters {
                 resultList.append(source)
                 if let index = oldList.firstIndex(of: source) {
                     resultCheckList.append(oldCheckList[index])
-                    print(resultCheckList)
                 } else {
                     resultCheckList.append(false)
                 }

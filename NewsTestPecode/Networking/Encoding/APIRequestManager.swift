@@ -62,8 +62,6 @@ enum APIRequestManager: EndPointType {
             switch self {
             case .getRequestNews(let filters, let page, let search):
                 var userParameters = Parameters()
-                print(ParametersFilters.titles[0])
-                print(ParametersFilters.lists[0][0])
                 userParameters = filters.filtersToParametrs()
                 userParameters["page"] = page
                 if let search = search {

@@ -7,7 +7,7 @@ class DataCellTable {
     var title: String
     var descript: String
     var link: String
-
+    
     
     init (image: Data?, imageLink: String, author: String, title: String, descript: String, link: String) {
         self.image = image

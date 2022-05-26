@@ -14,7 +14,6 @@ class SeparateFilterViewController: UIViewController {
     
     private func configure() {
         guard let filter = filter else { return }
-//        nameSettings.text = filter.title.capitalizingFirstLetter()
         updatedFilter = Filter(title: filter.title, list: filter.list, listCheck: filter.listCheck)
     }
     
@@ -58,7 +57,6 @@ extension SeparateFilterViewController: UITableViewDelegate, UITableViewDataSour
         }
         if updatedFilter?.listCheck[indexPath.row] == true {
             cell.accessoryType = .checkmark
-//            cell.tintColor = UIColor(named: "newGreen")
         }
         return cell
     }
@@ -69,12 +67,10 @@ extension SeparateFilterViewController: UITableViewDelegate, UITableViewDataSour
         let cell = self.tableView.cellForRow(at: indexPath)
         if cell?.accessoryType == .checkmark {
             cell?.accessoryType = .none
-//            cell?.tintColor = UIColor(named: "newGreen")
             updatedFilter?.listCheck[indexPath.row] = false
         } else {
             cell?.accessoryType = .checkmark
             updatedFilter?.listCheck[indexPath.row] = true
-//            cell?.tintColor = UIColor(named: "newGreen")
             
             /// We can use only one category, country or language in the request.
             if updatedFilter?.title == ParametrsRequestNewsApi.category.rawValue || updatedFilter?.title == ParametrsRequestNewsApi.country.rawValue || updatedFilter?.title == ParametrsRequestNewsApi.language.rawValue{

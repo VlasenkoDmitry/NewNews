@@ -5,7 +5,7 @@ class RealmClass: RealmBase {
     var realm = try! Realm()
     
     func realmFile() {
-                print(Realm.Configuration.defaultConfiguration.fileURL!)
+        print(Realm.Configuration.defaultConfiguration.fileURL!)
         var configuration = Realm.Configuration()
         configuration.deleteRealmIfMigrationNeeded = true
         realm = try! Realm(configuration: configuration)

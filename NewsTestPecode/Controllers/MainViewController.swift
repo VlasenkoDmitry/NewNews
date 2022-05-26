@@ -126,10 +126,10 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         cell.delegate = self
         if databaseRealm.checkNews(data: self.arrayAllNews[indexPath.row]) {
             cell.customView.notesBotton.isSelected = true
-//            cell.likeButton.isSelected = true
+            //            cell.likeButton.isSelected = true
         } else {
             cell.customView.notesBotton.isSelected = false
-//            cell.likeButton.isSelected = false
+            //            cell.likeButton.isSelected = false
         }
         return cell
     }
