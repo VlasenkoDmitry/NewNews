@@ -18,3 +18,9 @@ The program also includes:
 
 
 ![My gif](https://media.giphy.com/media/4Go6MamMh4213MNzsk/giphy.gif)
+
+Getting started:  
+---------------
+1. Clone this repo and open the Terminal
+2. In Terminal, run pod install
+3. Open "NewsTestPecode.xcworkspace" through Finder
