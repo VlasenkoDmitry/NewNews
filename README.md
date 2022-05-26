@@ -1,16 +1,14 @@
 # NewNews
 
-New News - an application for viewing news by API newsapi.org. 
-
-Features:  
----------------
+New News - an application for viewing news by API newsapi.org.  
 Download current news.  
 Filtering news by search keywords, category, country, sources.  
 Adding and removing news from bookmarks.  
 
-The program also includes:  
+Features:  
 ---------------
 ● MVC architecture.  
+● With storyboard.  
 ● Сustom UITableViewCell xib file includes: source, author, title, description and image with urlToImage, click opens relevant news in custom UIViewController using WKWebkit.  
 ● Userdefault use to save data about filters. Realm database use to store data about news in bookmarks.  
 ● UIRefreshControl added.  
