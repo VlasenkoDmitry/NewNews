@@ -9,7 +9,7 @@ extension UIViewController {
         present(alert, animated: true, completion: nil)
     }
     
-    func errorLoadingErrorHandling(error: Error) {
+    func handleLoadingNewsError(error: Error) {
         switch error {
         case LoadingError.networkFailure(let error):
             showAlert(title: "Error", text: error.localizedDescription)

@@ -14,7 +14,7 @@ struct NetworkManager {
         let news = NewsRequests()
         if let request = APIRequestManager.getRequestNews(filters: filters, page: page, search: search).buildRequest(){
             print(request)
-            router.request(from: request) { result, error in
+            router.getRequest(from: request) { result, error in
                 if let result = result, error == nil {
                     do {
                         if let json = try JSONSerialization.jsonObject(with: result) as? [String: Any] {
@@ -22,7 +22,7 @@ struct NetworkManager {
                                 news.quantityAllNewsOnRequest = totalResults
                             }
                             if let articles = json["articles"] as? [[String: Any]] {
-                                news.arrayNewNews = parsingJSONDataCellTable(articles: articles)
+                                news.arrayNewNews = parseJSONDataCellTable(articles: articles)
                             }
                             complition(news, nil)
                         }
@@ -42,7 +42,7 @@ struct NetworkManager {
     func getSourcesListRequest(complition: @escaping ([String]?, Error?) -> ()) {
         if let request = APIRequestManager.makeGetSourcesList.buildRequest() {
             print(request)
-            router.request(from: request) { result, error in
+            router.getRequest(from: request) { result, error in
                 if let result = result, error == nil {
                     var arraySources: [String] = []
                     do {
@@ -71,14 +71,14 @@ struct NetworkManager {
     
     func downloadImage(link: String, completion: @escaping (Data?) -> ()) {
         if let urlRequest = link.getUrlRequest() {
-            router.request(from: urlRequest) { result, error in
+            router.getRequest(from: urlRequest) { result, error in
                 completion(result)
             }
         }
     }
     
     /// Manual parsing
-    private func parsingJSONDataCellTable(articles: [[String: Any]]) -> [DataCellTable] {
+    private func parseJSONDataCellTable(articles: [[String: Any]]) -> [DataCellTable] {
         var data = [DataCellTable]()
         for article in articles {
             let news = DataCellTable(image: nil, imageLink: "", author: "", title: "", descript: "", link: "")
