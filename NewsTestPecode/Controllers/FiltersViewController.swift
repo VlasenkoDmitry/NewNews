@@ -4,12 +4,16 @@ class FiltersViewController: UIViewController {
     @IBOutlet weak var tableVIew: UITableView!
     private var models = [Section]()
     var filters = Filters()
-    var databaseUserDefault = UserDefaultClass()
+    var userDefaultBase = UserDefaultClass()
     var activeFilter: Filter?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        filters = databaseUserDefault.fillFiltersSavedData(filters: filters)
+        configure()
+    }
+    
+    func configure() {
+        filters = userDefaultBase.fillingFiltersSavedData(filters: filters)
         addSectionsInModels()
     }
     
@@ -71,7 +75,11 @@ extension FiltersViewController: UITableViewDelegate, UITableViewDataSource{
             return 0
         }
     }
-        
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return models.count
+    }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "FitlersTableViewCell", for: indexPath) as? FitlersTableViewCell else { return UITableViewCell () }
         let model = models[indexPath.section].options[indexPath.row]
@@ -94,6 +102,6 @@ extension FiltersViewController: UITableViewDelegate, UITableViewDataSource{
 extension FiltersViewController: SeparateFilterViewControllerDelegate {
     func setSettingsFromSeparateFilterViewController(updatedFilter: Filter) {
         filters.updateFilters(changedFilter: updatedFilter)
-        databaseUserDefault.setFilters(filters: filters)
+        userDefaultBase.setFilters(filters: filters)
     }
 }

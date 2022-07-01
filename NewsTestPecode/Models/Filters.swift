@@ -61,7 +61,7 @@ class Filters {
     
     /// Casting filters to type Parameters to using it like a part of the request
     /// - Returns: Filters casted to type Parameters like ["sources" : "bbc-news,bild",]
-    func changeFiltersToParametrs() -> Parameters {
+    func filtersToParametrs() -> Parameters {
         var parameters = Parameters()
         for filter in filters {
             var array: [String] = []

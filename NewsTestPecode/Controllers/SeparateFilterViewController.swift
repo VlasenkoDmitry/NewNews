@@ -9,6 +9,10 @@ class SeparateFilterViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        configure()
+    }
+    
+    private func configure() {
         guard let filter = filter else { return }
         updatedFilter = Filter(title: filter.title, list: filter.list, listCheck: filter.listCheck)
     }
@@ -21,8 +25,8 @@ class SeparateFilterViewController: UIViewController {
     }
     
     private func deleteAnotherMarks(indexPath: IndexPath) {
-        guard let numberCheckInFilter = updatedFilter?.listCheck.count else { return }
-        for index in 0..<numberCheckInFilter {
+        guard let quantityCheckInFilter = updatedFilter?.listCheck.count else { return }
+        for index in 0..<quantityCheckInFilter {
             if index == indexPath.row { continue }
             updateFilter(index: index)
             updateAccessoryTypes(index: index)

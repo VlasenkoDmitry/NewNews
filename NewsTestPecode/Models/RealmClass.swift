@@ -41,7 +41,7 @@ class RealmClass: RealmBase {
     func addNews(data: DataCellTable){
         do {
             try realm.write({
-                realm.add(getObjectRealm(data: data))
+                realm.add(objectRealm(data: data))
             })
         } catch let error {
             print(error)
@@ -108,7 +108,7 @@ class RealmClass: RealmBase {
         }
     }
     
-    private func getObjectRealm(data: DataCellTable) -> NewsRealmData{
+    private func objectRealm(data: DataCellTable) -> NewsRealmData{
         let object = NewsRealmData()
         object.image = data.image
         object.link = data.link
