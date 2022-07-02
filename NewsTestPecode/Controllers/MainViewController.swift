@@ -24,7 +24,7 @@ class MainViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        filters = databaseUserDefault.fillFiltersSavedData(filters: filters)
+        filters.fillSourcesFilterSavedData()
     }
     
     /// Loading news and reloading tableview after user request(button reload and refreshControll)

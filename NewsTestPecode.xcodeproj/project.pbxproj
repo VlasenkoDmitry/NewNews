@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		ADE8439F72648ACB438DF14F /* Pods_NewsTestPecode.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0DCDFB2B3A505DD88B1759AB /* Pods_NewsTestPecode.framework */; };
+		E11178FF2870734F009063A1 /* FiltersProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11178FE2870734F009063A1 /* FiltersProtocol.swift */; };
 		E11667012746953C004AE3AC /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11667002746953C004AE3AC /* SceneDelegate.swift */; };
 		E14D1BEB2829052F0085146B /* RealmClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14D1BEA2829052F0085146B /* RealmClass.swift */; };
 		E14D1BED28298DFE0085146B /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14D1BEC28298DFD0085146B /* WebViewController.swift */; };
@@ -58,6 +59,7 @@
 /* Begin PBXFileReference section */
 		0DCDFB2B3A505DD88B1759AB /* Pods_NewsTestPecode.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NewsTestPecode.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C5F55C8A52AF45D7D30E57C3 /* Pods-NewsTestPecode.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NewsTestPecode.debug.xcconfig"; path = "Target Support Files/Pods-NewsTestPecode/Pods-NewsTestPecode.debug.xcconfig"; sourceTree = "<group>"; };
+		E11178FE2870734F009063A1 /* FiltersProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FiltersProtocol.swift; sourceTree = "<group>"; };
 		E11667002746953C004AE3AC /* SceneDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		E14D1BEA2829052F0085146B /* RealmClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmClass.swift; sourceTree = "<group>"; };
 		E14D1BEC28298DFD0085146B /* WebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewController.swift; sourceTree = "<group>"; };
@@ -197,6 +199,7 @@
 			isa = PBXGroup;
 			children = (
 				E19DF769282A6D910041331C /* FavouriteNewsViewControllerDelegate.swift */,
+				E11178FE2870734F009063A1 /* FiltersProtocol.swift */,
 				E1EF608D283420F700BC03EA /* SeparateFilterViewControllerDelegate.swift */,
 				E19DF76D282A6DEC0041331C /* MainTableViewCellDelegate.swift */,
 				E19DF76F282A6E120041331C /* XIBToCellDelegate.swift */,
@@ -457,6 +460,7 @@
 				E1AF6B48282D53E2000477B5 /* LoadingViewController.swift in Sources */,
 				E1AF6B4A282D5504000477B5 /* NetworkManager.swift in Sources */,
 				E19DF76A282A6D910041331C /* FavouriteNewsViewControllerDelegate.swift in Sources */,
+				E11178FF2870734F009063A1 /* FiltersProtocol.swift in Sources */,
 				E19DF776282A70D80041331C /* Extension+String.swift in Sources */,
 				E19DF778282AD28C0041331C /* FitlersTableViewCell.swift in Sources */,
 				E1AF6B44282D29EF000477B5 /* Filter.swift in Sources */,

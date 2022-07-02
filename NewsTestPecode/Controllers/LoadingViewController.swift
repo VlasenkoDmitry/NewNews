@@ -18,35 +18,34 @@ class LoadingViewController: UIViewController {
         super.viewDidAppear(animated)
         //      userDefaultBase.clearFilters()
         
-        downloadSourcesList { sourcesList, error  in
-            if sourcesList == sourcesList {
-                self.updateFilters(sourcesList: sourcesList)
-            } else {
-                DispatchQueue.main.async {
-                    self.showAlert(title: "", text: "Downloading \"sources\" parameters is not success. Default parameters will be used")
-                }
-            }
-            self.filters = self.databaseUserDefault.fillFiltersSavedData(filters: self.filters)
+        downloadAndSetupSourcesList { sourcesList, error  in
             self.loadNews()
         }
     }
     
-    private func initialize() {
-        indicator.startAnimating()
-    }
-    
     /// We should download "sources" list to display actual filters
-    private func downloadSourcesList(complition: @escaping ([String]?, Error?) -> ()) {
+    private func downloadAndSetupSourcesList(complition: @escaping ([String]?, Error?) -> ()) {
         networkManager.getSourcesListRequest { result, error in
+            if let sourcesList = result, error == nil {
+                self.replaceSourcesList(sourcesList: sourcesList)
+            } else {
+                if let error = error {
+                    print(error.localizedDescription)
+                }
+                DispatchQueue.main.async {
+                    self.showAlert(title: "", text: "Downloading \"sources\" parameters is not success. Default parameters will be used")
+                }
+            }
+            self.filters.fillSourcesFilterSavedData()
             complition(result, error)
         }
     }
     
-    private func updateFilters(sourcesList: [String]? ) {
+    private func replaceSourcesList(sourcesList: [String]? ) {
         guard let sourcesList = sourcesList else { return }
         var savedFilters = Filters()
         savedFilters = self.databaseUserDefault.readSavedFilters(titles: ParametersFilters.titles)
-        savedFilters.updateSoures(downloadedListSources: sourcesList)
+        savedFilters.updateSourcesFilter(downloadedListSources: sourcesList)
         self.databaseUserDefault.setFilters(filters: savedFilters)
         if let index = ParametersFilters.titles.firstIndex(of: ParametrsRequestNewsApi.sources.rawValue) {
             ParametersFilters.lists[index] = savedFilters.filters[index].list
@@ -59,7 +58,7 @@ class LoadingViewController: UIViewController {
                 if let result = result, error == nil {
                     self.news = result.newNews
                     self.numberAllNewsOnRequest = result.numberAllNewsOnRequest
-                    self.openMainViewController()
+                    self.prepareAndLaunchMainViewController()
                 } else {
                     guard let error = error else { return }
                     self.handleLoadingNewsError(error: error)
@@ -70,7 +69,7 @@ class LoadingViewController: UIViewController {
     }
     
     /// Opening the main screen after successfully downloading news, transferring links of main data(an array of downloaded news, downloaded filters from the Realm database, the number of news in the request without a limit (to understand how much news we can theoretically download, a link to the filter database) )
-    private func openMainViewController() {
+    private func prepareAndLaunchMainViewController() {
         guard let controler = self.storyboard?.instantiateViewController(identifier: "MainViewController") as? MainViewController else { return }
         controler.news = self.news
         controler.filters = self.filters

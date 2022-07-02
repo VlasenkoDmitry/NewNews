@@ -1,6 +1,6 @@
 import Foundation
 
-class Filters {
+class Filters: FiltersProtocol {
     var filters = [Filter]()
     
     init() {
@@ -61,7 +61,7 @@ class Filters {
     
     /// Casting filters to type Parameters to using it like a part of the request
     /// - Returns: Filters casted to type Parameters like ["sources" : "bbc-news,bild",]
-    func filtersToParametrs() -> Parameters {
+    func getParametersFromFilters() -> Parameters {
         var parameters = Parameters()
         for filter in filters {
             var array: [String] = []
@@ -77,7 +77,7 @@ class Filters {
         return parameters
     }
     
-    func updateSoures(downloadedListSources: [String]) {
+    func updateSourcesFilter(downloadedListSources: [String]) {
         guard let oldList = filters.first(where: { $0.title == ParametrsRequestNewsApi.sources.rawValue })?.list else { return }
         guard let oldCheckList = filters.first(where: { $0.title == ParametrsRequestNewsApi.sources.rawValue })?.listCheck else { return }
         var resultList: [String] = []
@@ -97,6 +97,21 @@ class Filters {
         }
         filters.first(where: { $0.title == ParametrsRequestNewsApi.sources.rawValue })?.list = resultList
         filters.first(where: { $0.title == ParametrsRequestNewsApi.sources.rawValue })?.listCheck = resultCheckList
+    }
+    
+    func fillSourcesFilterSavedData() {
+        filters = UserDefaultClass().readSavedFilters(titles: ParametersFilters.titles).filters
+        
+        /// Check the installed filters. If they are not present, we will add one filter. We should add at least one filter on demand API
+        var mainChecker = Set<Bool>()
+        for filter in filters {
+            let newChecker = Set(filter.listCheck.map { $0 })
+            mainChecker = mainChecker.union(newChecker)
+        }
+        if mainChecker.contains(true) == false {
+            filters[0].listCheck[0] = true
+            filters.first(where: {$0.title == ParametrsRequestNewsApi.sources.rawValue})?.listCheck[0] = true
+        }
     }
     
 }

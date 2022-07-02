@@ -9,7 +9,7 @@ class FiltersViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        filters = databaseUserDefault.fillFiltersSavedData(filters: filters)
+        filters.fillSourcesFilterSavedData()
         addSectionsInModels()
     }
     

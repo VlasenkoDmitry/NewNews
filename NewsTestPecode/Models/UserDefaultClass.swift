@@ -27,21 +27,7 @@ class UserDefaultClass: UserDefaultProtocol {
         return savedFilters
     }
     
-    func fillFiltersSavedData(filters: Filters) -> Filters {
-        var filters = filters
-        filters = readSavedFilters(titles: ParametersFilters.titles)
-        
-        /// Check the installed filters. If they are not present, we will add one filter. We should add at least one filter on demand API
-        var mainChecker = Set<Bool>()
-        for filter in filters.filters {
-            let newChecker = Set(filter.listCheck.map { $0 })
-            mainChecker = mainChecker.union(newChecker)
-        }
-        if mainChecker.contains(true) == false {
-            filters.filters[0].listCheck[0] = true
-        }
-        return filters
-    }
+
     
     func clearFilters() {
         print(Array(UserDefaults.standard.dictionaryRepresentation().keys).count)
