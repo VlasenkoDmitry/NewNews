@@ -4,16 +4,12 @@ class FiltersViewController: UIViewController {
     @IBOutlet weak var tableVIew: UITableView!
     private var models = [Section]()
     var filters = Filters()
-    var userDefaultBase = UserDefaultClass()
+    var databaseUserDefault = UserDefaultClass()
     var activeFilter: Filter?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        configure()
-    }
-    
-    func configure() {
-        filters = userDefaultBase.fillingFiltersSavedData(filters: filters)
+        filters = databaseUserDefault.fillFiltersSavedData(filters: filters)
         addSectionsInModels()
     }
     
@@ -102,6 +98,6 @@ extension FiltersViewController: UITableViewDelegate, UITableViewDataSource{
 extension FiltersViewController: SeparateFilterViewControllerDelegate {
     func setSettingsFromSeparateFilterViewController(updatedFilter: Filter) {
         filters.updateFilters(changedFilter: updatedFilter)
-        userDefaultBase.setFilters(filters: filters)
+        databaseUserDefault.setFilters(filters: filters)
     }
 }

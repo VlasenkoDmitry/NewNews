@@ -11,9 +11,9 @@ class MainViewController: UIViewController {
     }()
     private var databaseRealm = RealmClass()
     private let networkManager = NetworkManager()
-    var userDefaultsBase = UserDefaultClass()
-    var quantityAllNewsOnRequest = 0
-    var arrayAllNews = [DataCellTable]()
+    var databaseUserDefault = UserDefaultClass()
+    var numberAllNewsOnRequest = 0
+    var news = [DataCellTable]()
     var filters = Filters()
     
     override func viewDidLoad() {
@@ -24,7 +24,7 @@ class MainViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        filters = userDefaultsBase.fillingFiltersSavedData(filters: filters)
+        filters = databaseUserDefault.fillFiltersSavedData(filters: filters)
     }
     
     /// Loading news and reloading tableview after user request(button reload and refreshControll)
@@ -32,12 +32,12 @@ class MainViewController: UIViewController {
         networkManager.getNewsRequest(filters: filters, page: 1, search: searshBar.text)  { [weak self] result, error  in
             DispatchQueue.main.async {
                 if let result = result, error == nil {
-                    self?.arrayAllNews = result.arrayNewNews
-                    self?.quantityAllNewsOnRequest = result.quantityAllNewsOnRequest
+                    self?.news = result.newNews
+                    self?.numberAllNewsOnRequest = result.numberAllNewsOnRequest
                     self?.tableView.reloadData()
                 }
                 if let error = error {
-                    self?.errorLoadingErrorHandling(error: error)
+                    self?.handleLoadingNewsError(error: error)
                 }
             }
         }
@@ -46,20 +46,20 @@ class MainViewController: UIViewController {
     /// Loading news to add them to the bottom of the table if the user scrolls to the second-to-last downloaded news
     /// - Parameter numberOfLastCell: we should know the number of the last cell of tableview and the page size constant to calculate the number of the next page of the request
     private func addMoreNewsBelow(numberOfLastCell: Int) {
-        let quantityLoadedNews = numberOfLastCell + 1
-        if quantityLoadedNews % Constants.pageSize == 0 {
-            let page = quantityLoadedNews / Constants.pageSize + 1
+        let numberLoadedNews = numberOfLastCell + 1
+        if numberLoadedNews % Constants.pageSize == 0 {
+            let page = numberLoadedNews / Constants.pageSize + 1
             networkManager.getNewsRequest(filters: filters, page: page, search: searshBar.text) { [weak self]  result, error in
                 DispatchQueue.main.async {
                     if let newNews = result, error == nil {
-                        if newNews.arrayNewNews.count > 0 {
-                            self?.arrayAllNews += newNews.arrayNewNews
-                            self?.quantityAllNewsOnRequest = newNews.quantityAllNewsOnRequest
-                            self?.displayNewNews(quantityLastNewNews: newNews.arrayNewNews.count)
+                        if newNews.newNews.count > 0 {
+                            self?.news += newNews.newNews
+                            self?.numberAllNewsOnRequest = newNews.numberAllNewsOnRequest
+                            self?.displayNewNews(numberLastNewNews: newNews.newNews.count)
                         }
-                    }
-                    if let error = error {
-                        self?.errorLoadingErrorHandling(error: error)
+                    } else {
+                        guard let error = error else { return }
+                        self?.handleLoadingNewsError(error: error)
                     }
                 }
             }
@@ -68,19 +68,19 @@ class MainViewController: UIViewController {
     
     /// Adding news in the tableView after calculating the indexes of the rows that will be add
     /// - Parameter quantityLastNewNews: for calculating the indexes of the rows that will be add
-    private func displayNewNews(quantityLastNewNews: Int) {
-        let quantityAllNews = self.arrayAllNews.count
-        var arrayIndexPath: [IndexPath] = []
-        for element in (quantityAllNews - quantityLastNewNews)...(quantityAllNews - 1) {
-            arrayIndexPath.append(IndexPath(row: element, section: 0))
+    private func displayNewNews(numberLastNewNews: Int) {
+        let numberAllNews = self.news.count
+        var indexPaths: [IndexPath] = []
+        for element in (numberAllNews - numberLastNewNews)...(numberAllNews - 1) {
+            indexPaths.append(IndexPath(row: element, section: 0))
         }
-        self.tableView.insertRows(at: arrayIndexPath, with: .automatic)
+        self.tableView.insertRows(at: indexPaths, with: .automatic)
     }
     
     @IBAction private func filtersPressed(_ sender: UIButton) {
         guard let controler = self.storyboard?.instantiateViewController(identifier: "FiltersViewController") as? FiltersViewController else { return }
         controler.filters = self.filters
-        controler.userDefaultBase = userDefaultsBase
+        controler.databaseUserDefault = databaseUserDefault
         self.navigationController?.pushViewController(controler, animated: true)
     }
     
@@ -103,28 +103,23 @@ class MainViewController: UIViewController {
     }
     
     /// Downloading new news if user swipe to second-to-last news
-    /// - Parameters:
-    ///   - numberCell: number of checking cell
-    ///   - quantityCells: quantity cells in tableView
-    private func checkLastToSecondCellTableView(numberCell: Int, quantityCells: Int) {
-        if numberCell + 2  == quantityCells {
-            addMoreNewsBelow(numberOfLastCell: numberCell + 1)
-        }
+    private func checkLastToSecondCellTableView(cell: Int, numberCells: Int) -> Bool {
+        cell + 2  == numberCells ? true : false
     }
 }
 
 extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return arrayAllNews.count
+        return news.count
     }
     
     /// Creating cell and installing status of likeButton
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "MainTableViewCell", for: indexPath) as? MainTableViewCell else { return UITableViewCell() }
-        if self.arrayAllNews.count == 0 { return UITableViewCell() }
-        cell.configure(dataNews: self.arrayAllNews[indexPath.row], index: indexPath.row)
+        if self.news.count == 0 { return UITableViewCell() }
+        cell.configure(dataNews: self.news[indexPath.row], index: indexPath.row)
         cell.delegate = self
-        if databaseRealm.checkNews(data: self.arrayAllNews[indexPath.row]) {
+        if databaseRealm.checkNews(data: self.news[indexPath.row]) {
             cell.customView.notesBotton.isSelected = true
             //            cell.likeButton.isSelected = true
         } else {
@@ -140,23 +135,25 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        openWebController(link: arrayAllNews[indexPath.row].link)
+        openWebController(link: news[indexPath.row].link)
     }
     
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        checkLastToSecondCellTableView(numberCell: indexPath.row, quantityCells: arrayAllNews.count)
+        if checkLastToSecondCellTableView(cell: indexPath.row, numberCells: news.count) {
+            addMoreNewsBelow(numberOfLastCell: indexPath.row + 1)
+        }
     }
 }
 
 /// Extension works when turn on or turn out "like"
 extension MainViewController: MainTableViewCellDelegate {
     func addNewsToFavourite(index: Int) {
-        databaseRealm.addNews(data: arrayAllNews[index])
+        databaseRealm.addNews(data: news[index])
     }
     
     func deleteNewsFromFavourite(index: Int) {
-        databaseRealm.deleteNewsByLink(data: arrayAllNews[index])
+        databaseRealm.deleteNewsByLink(data: news[index])
     }
 }
 

@@ -1,6 +1,6 @@
 import Foundation
 
 class NewsRequests {
-    var quantityAllNewsOnRequest = 0
-    var arrayNewNews: [DataCellTable] = []
+    var numberAllNewsOnRequest = 0
+    var newNews: [DataCellTable] = []
 }

@@ -4,10 +4,10 @@ class FavouriteNewsViewController: UIViewController {
     
     @IBOutlet weak var backButton: UIButton!
     @IBOutlet weak var cleanAllButton: UIButton!
-    @IBOutlet weak var tableview: UITableView!
+    @IBOutlet weak var tableView: UITableView!
     
     weak var delegate: FavouriteNewsViewControllerDelegate?
-    private var arrayNews: [NewsRealmData] = []
+    private var news: [NewsRealmData] = []
     var databaseRealm: RealmClass?
     
     override func viewDidLoad() {
@@ -27,20 +27,20 @@ class FavouriteNewsViewController: UIViewController {
     }
     
     private func updateNews() {
-        if let arrayNews = databaseRealm?.getAllObjectsNewsRealmData() {
-            self.arrayNews = arrayNews
+        if let news = databaseRealm?.getAllObjectsNewsRealmData() {
+            self.news = news
         }
     }
 }
 
 extension FavouriteNewsViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return arrayNews.count
+        return news.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "FavouritesTableViewCell", for: indexPath) as? FavouritesTableViewCell else { return UITableViewCell() }
-        cell.configure(title: arrayNews[indexPath.row].title, image:  arrayNews[indexPath.row].image)
+        cell.configure(title: news[indexPath.row].title, image:  news[indexPath.row].image)
         return cell
     }
     
@@ -50,15 +50,15 @@ extension FavouriteNewsViewController: UITableViewDelegate, UITableViewDataSourc
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        delegate?.openNews(title: arrayNews[indexPath.row].title)
+        delegate?.openNews(title: news[indexPath.row].title)
     }
     
     /// When you move the cell to the left, the delete button appears. When you click it, the database and table are updated
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == UITableViewCell.EditingStyle.delete {
-            databaseRealm?.deleteNewsByTitle(title: arrayNews[indexPath.row].title)
+            databaseRealm?.deleteNewsByTitle(title: news[indexPath.row].title)
             updateNews()
-            tableview.reloadData()
+            tableView.reloadData()
         }
     }    
 }

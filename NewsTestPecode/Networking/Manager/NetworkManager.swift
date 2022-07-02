@@ -19,10 +19,10 @@ struct NetworkManager {
                     do {
                         if let json = try JSONSerialization.jsonObject(with: result) as? [String: Any] {
                             if let totalResults = json["totalResults"] as? Int {
-                                news.quantityAllNewsOnRequest = totalResults
+                                news.numberAllNewsOnRequest = totalResults
                             }
                             if let articles = json["articles"] as? [[String: Any]] {
-                                news.arrayNewNews = parsingJSONDataCellTable(articles: articles)
+                                news.newNews = parsingJSONDataCellTable(articles: articles)
                             }
                             complition(news, nil)
                         }

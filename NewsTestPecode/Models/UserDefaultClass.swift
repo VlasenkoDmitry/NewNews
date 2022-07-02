@@ -27,7 +27,7 @@ class UserDefaultClass: UserDefaultProtocol {
         return savedFilters
     }
     
-    func fillingFiltersSavedData(filters: Filters) -> Filters {
+    func fillFiltersSavedData(filters: Filters) -> Filters {
         var filters = filters
         filters = readSavedFilters(titles: ParametersFilters.titles)
         
