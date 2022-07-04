@@ -2,13 +2,17 @@ import UIKit
 import WebKit
 
 class WebViewController: UIViewController {
-    var link: String?
+    private var link: String?
     @IBOutlet weak var backButton: UIButton!
     @IBOutlet weak var webView: WKWebView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         loadWebView()
+    }
+    
+    func setLink(link: String?) {
+        self.link = link
     }
     
     private func loadWebView() {

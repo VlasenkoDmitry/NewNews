@@ -1,7 +1,7 @@
 import UIKit
 
 class MainTableViewCell: UITableViewCell {
-    var customView = CellTableViewXIBClass()
+    private var customView = CellTableViewXIBClass()
     weak var delegate: MainTableViewCellDelegate?
     
     required init?(coder aDecoder: NSCoder) {
@@ -35,6 +35,10 @@ class MainTableViewCell: UITableViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         customView.frame = CGRect(x: 16, y: 10, width: self.frame.size.width - 32, height: self.frame.size.height - 20)
+    }
+    
+    func getCustomView() -> CellTableViewXIBClass {
+        return customView
     }
 }
 

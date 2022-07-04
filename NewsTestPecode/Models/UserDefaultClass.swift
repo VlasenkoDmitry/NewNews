@@ -1,30 +1,31 @@
 import Foundation
 
 class UserDefaultClass: UserDefaultProtocol {
-    let defaults = UserDefaults.standard
+    private let defaults = UserDefaults.standard
     
     func setFilters(filters: Filters) {
-        for index in filters.filters {
+        for index in filters.getFilters() {
             var arrayList: [String] = []
             var arrayListCheck: [Bool] = []
-            for j in 0..<index.list.count {
-                arrayList.append(index.list[j])
-                arrayListCheck.append(index.listCheck[j])
+            for j in 0..<index.getList().count {
+                arrayList.append(index.getList()[j])
+                arrayListCheck.append(index.getListCheck()[j])
             }
-            defaults.set(arrayList, forKey: index.title + " arrayList")
-            defaults.set(arrayListCheck, forKey: index.title + " arrayListCheck")
+            defaults.set(arrayList, forKey: index.getTitle() + " arrayList")
+            defaults.set(arrayListCheck, forKey: index.getTitle() + " arrayListCheck")
         }
     }
     
     func readSavedFilters(titles: [String]) -> Filters {
-        let savedFilters = Filters()
+        let savedFiltersObject = Filters()
         for title in titles {
             guard let arrayList = defaults.object(forKey: title + " arrayList") as? [String] else { continue }
             guard let arrayListCheck = defaults.object(forKey: title + " arrayListCheck") as? [Bool] else { continue }
-            savedFilters.filters.first(where: { $0.title == title })?.list = arrayList
-            savedFilters.filters.first(where: { $0.title == title })?.listCheck = arrayListCheck
+            let savedFilters = savedFiltersObject.getFilters()
+            savedFilters.first(where: { $0.getTitle() == title })?.setList(list: arrayList)
+            savedFilters.first(where: { $0.getTitle() == title })?.setListCheck(listCheck: arrayListCheck)
         }
-        return savedFilters
+        return savedFiltersObject
     }
     
 

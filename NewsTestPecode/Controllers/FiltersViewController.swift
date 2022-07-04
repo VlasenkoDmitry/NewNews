@@ -1,41 +1,42 @@
 import UIKit
 
 class FiltersViewController: UIViewController {
-    @IBOutlet weak var tableVIew: UITableView!
+    private var filtersObject = Filters()
+    private var databaseUserDefault = UserDefaultClass()
+    private var activeFilter: Filter?
     private var models = [Section]()
-    var filters = Filters()
-    var databaseUserDefault = UserDefaultClass()
-    var activeFilter: Filter?
-    
+    @IBOutlet weak var tableVIew: UITableView!
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        filters.fillSourcesFilterSavedData()
+        filtersObject.fillSourcesFilterSavedData()
         addSectionsInModels()
     }
     
     private func addSectionsInModels() {
+        let filters = filtersObject.getFilters()
         models.append(Section(title: "", options: [
             SettingsOption(title: ParametrsRequestNewsApi.sources.rawValue, handler: { [self] in
-                activeFilter = filters.filters.first(where: { $0.title == ParametrsRequestNewsApi.sources.rawValue })
+                activeFilter = filters.first(where: { $0.getTitle() == ParametrsRequestNewsApi.sources.rawValue })
             })
         ], footer: "Can't mix sources param with the country or category params"))
         models.append(Section(title: "", options: [
             SettingsOption(title: ParametrsRequestNewsApi.category.rawValue, handler: { [self] in
-                activeFilter = filters.filters.first(where: { $0.title == ParametrsRequestNewsApi.category.rawValue })
+                activeFilter = filters.first(where: { $0.getTitle() == ParametrsRequestNewsApi.category.rawValue })
             }),
             SettingsOption(title: ParametrsRequestNewsApi.country.rawValue, handler: { [self] in
-                activeFilter = filters.filters.first(where: { $0.title == ParametrsRequestNewsApi.country.rawValue })
+                activeFilter = filters.first(where: { $0.getTitle() == ParametrsRequestNewsApi.country.rawValue })
             })
         ], footer: nil))
         models.append(Section(title: "", options: [
             SettingsOption(title: ParametrsRequestNewsApi.language.rawValue, handler: { [self] in
-                activeFilter = filters.filters.first(where: { $0.title == ParametrsRequestNewsApi.language.rawValue })
+                activeFilter = filters.first(where: { $0.getTitle() == ParametrsRequestNewsApi.language.rawValue })
             })
         ], footer: nil))
     }
     
     @IBAction func backPressed(_ sender: UIButton) {
-        if filters.checkAtLeastOneActiveFilter() {
+        if filtersObject.checkAtLeastOneActiveFilter() {
             navigationController?.popViewController(animated: true)
         } else {
             showAlert(title: "", text: "Please, select at least 1 filter")
@@ -89,14 +90,19 @@ extension FiltersViewController: UITableViewDelegate, UITableViewDataSource{
         model.handler()
         guard let controler = self.storyboard?.instantiateViewController(identifier: "SeparateFilterViewController") as? SeparateFilterViewController else { return }
         controler.delegate = self
-        controler.filter = activeFilter
+        controler.setFilter(filter: activeFilter)
         self.navigationController?.pushViewController(controler, animated: true)
+    }
+    
+    func setFiltersAndDataBase(filters: Filters, databaseUserDefault: UserDefaultClass) {
+        self.filtersObject = filters
+        self.databaseUserDefault = databaseUserDefault
     }
 }
 
 extension FiltersViewController: SeparateFilterViewControllerDelegate {
     func setSettingsFromSeparateFilterViewController(updatedFilter: Filter) {
-        filters.updateFilters(changedFilter: updatedFilter)
-        databaseUserDefault.setFilters(filters: filters)
+        filtersObject.updateFilters(changedFilter: updatedFilter)
+        databaseUserDefault.setFilters(filters: filtersObject)
     }
 }

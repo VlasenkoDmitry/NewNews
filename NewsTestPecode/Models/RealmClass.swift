@@ -2,7 +2,7 @@ import Foundation
 import RealmSwift
 
 class RealmClass: RealmBase {
-    var realm = try! Realm()
+    private var realm = try! Realm()
     
     func realmFile() {
         print(Realm.Configuration.defaultConfiguration.fileURL!)
@@ -28,7 +28,7 @@ class RealmClass: RealmBase {
         var result = false
         do {
             try realm.write({
-                if let _ = realm.objects(NewsRealmData.self).filter("link = %@", data.link).first {
+                if let _ = realm.objects(NewsRealmData.self).filter("link = %@", data.getLink()).first {
                     result = true
                 }
             })
@@ -51,7 +51,7 @@ class RealmClass: RealmBase {
     func deleteNewsByLink(data: DataCellTable){
         do {
             try realm.write({
-                guard let item = realm.objects(NewsRealmData.self).filter("link = %@", data.link).first else {return}
+                guard let item = realm.objects(NewsRealmData.self).filter("link = %@", data.getLink()).first else {return}
                 realm.delete(item)
             })
         } catch let error {
@@ -110,9 +110,9 @@ class RealmClass: RealmBase {
     
     private func objectRealm(data: DataCellTable) -> NewsRealmData{
         let object = NewsRealmData()
-        object.image = data.image
-        object.link = data.link
-        object.title = data.title
+        object.image = data.getImage()
+        object.link = data.getLink()
+        object.title = data.getTitle()
         return object
     }
 }

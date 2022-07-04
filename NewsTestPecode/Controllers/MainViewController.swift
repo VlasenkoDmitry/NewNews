@@ -1,20 +1,20 @@
 import UIKit
 
 class MainViewController: UIViewController {
-    @IBOutlet weak var tableView: UITableView!
-    @IBOutlet weak var searshBar: UISearchBar!
     
+    private let networkManager = NetworkManager()
     private let refreshControll: UIRefreshControl = {
         let refresh = UIRefreshControl()
         refresh.addTarget(self, action: #selector(refresh(sender:)), for: .valueChanged)
         return refresh
     }()
     private var databaseRealm = RealmClass()
-    private let networkManager = NetworkManager()
-    var databaseUserDefault = UserDefaultClass()
-    var numberAllNewsOnRequest = 0
-    var news = [DataCellTable]()
-    var filters = Filters()
+    private var databaseUserDefault = UserDefaultClass()
+    private var numberAllNewsOnRequest = 0
+    private var news = [DataCellTable]()
+    private var filters = Filters()
+    @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var searshBar: UISearchBar!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,8 +32,8 @@ class MainViewController: UIViewController {
         networkManager.getNewsRequest(filters: filters, page: 1, search: searshBar.text)  { [weak self] result, error  in
             DispatchQueue.main.async {
                 if let result = result, error == nil {
-                    self?.news = result.newNews
-                    self?.numberAllNewsOnRequest = result.numberAllNewsOnRequest
+                    self?.news = result.getNews()
+                    self?.numberAllNewsOnRequest = result.getNumberAllNewsOnRequest()
                     self?.tableView.reloadData()
                 }
                 if let error = error {
@@ -52,10 +52,10 @@ class MainViewController: UIViewController {
             networkManager.getNewsRequest(filters: filters, page: page, search: searshBar.text) { [weak self]  result, error in
                 DispatchQueue.main.async {
                     if let newNews = result, error == nil {
-                        if newNews.newNews.count > 0 {
-                            self?.news += newNews.newNews
-                            self?.numberAllNewsOnRequest = newNews.numberAllNewsOnRequest
-                            self?.displayNewNews(numberLastNewNews: newNews.newNews.count)
+                        if newNews.getNews().count > 0 {
+                            self?.news += newNews.getNews()
+                            self?.numberAllNewsOnRequest = newNews.getNumberAllNewsOnRequest()
+                            self?.displayNewNews(numberLastNewNews: newNews.getNews().count)
                         }
                     } else {
                         guard let error = error else { return }
@@ -79,15 +79,14 @@ class MainViewController: UIViewController {
     
     @IBAction private func filtersPressed(_ sender: UIButton) {
         guard let controler = self.storyboard?.instantiateViewController(identifier: "FiltersViewController") as? FiltersViewController else { return }
-        controler.filters = self.filters
-        controler.databaseUserDefault = databaseUserDefault
+        controler.setFiltersAndDataBase(filters: filters, databaseUserDefault: databaseUserDefault)
         self.navigationController?.pushViewController(controler, animated: true)
     }
     
     @IBAction private func favouritePressed(_ sender: UIButton) {
         guard let controler = self.storyboard?.instantiateViewController(identifier: "FavouritesViewController") as? FavouriteNewsViewController else { return }
         controler.delegate = self
-        controler.databaseRealm = databaseRealm
+        controler.setDatabase(dataBase: databaseRealm)
         self.navigationController?.pushViewController(controler, animated: true)
     }
     
@@ -98,13 +97,20 @@ class MainViewController: UIViewController {
     
     private func openWebController(link: String) {
         guard let controler = self.storyboard?.instantiateViewController(identifier: "WebViewController") as? WebViewController else { return }
-        controler.link = link
+        controler.setLink(link: link)
         self.navigationController?.pushViewController(controler, animated: true)
     }
     
     /// Downloading new news if user swipe to second-to-last news
     private func checkLastToSecondCellTableView(cell: Int, numberCells: Int) -> Bool {
         cell + 2  == numberCells ? true : false
+    }
+    
+    func setData(news: [DataCellTable], filters: Filters, numberAllNewsOnRequest: Int, databaseUserDefault: UserDefaultClass){
+        self.news = news
+        self.filters = filters
+        self.numberAllNewsOnRequest = numberAllNewsOnRequest
+        self.databaseUserDefault = databaseUserDefault
     }
 }
 
@@ -120,9 +126,9 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         cell.configure(dataNews: self.news[indexPath.row], index: indexPath.row)
         cell.delegate = self
         if databaseRealm.checkNews(data: self.news[indexPath.row]) {
-            cell.customView.notesBotton.isSelected = true
+            cell.getCustomView().notesBotton.isSelected = true
         } else {
-            cell.customView.notesBotton.isSelected = false
+            cell.getCustomView().notesBotton.isSelected = false
         }
         return cell
     }
@@ -133,7 +139,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        openWebController(link: news[indexPath.row].link)
+        openWebController(link: news[indexPath.row].getLink())
     }
     
     

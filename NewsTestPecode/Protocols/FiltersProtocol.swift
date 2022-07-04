@@ -7,11 +7,12 @@
 
 import Foundation
 
-protocol FiltersProtocol{
+protocol FiltersProtocol {
     func setNewSettingsFilter(addedFilter: Filter)
     func updateFilters(changedFilter: Filter)
     func checkAtLeastOneActiveFilter() -> Bool
     func getParametersFromFilters() -> Parameters
     func updateSourcesFilter(downloadedListSources: [String])
     func fillSourcesFilterSavedData()
+    func getFilters() -> [Filter]
 }

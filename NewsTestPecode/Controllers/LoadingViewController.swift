@@ -1,14 +1,13 @@
 import UIKit
 
 class LoadingViewController: UIViewController {
-    
-    @IBOutlet weak var indicator: UIActivityIndicatorView!
-    private var news = [DataCellTable]()
     private let networkManager = NetworkManager()
-    private var filters = Filters()
-    private var databaseUserDefault = UserDefaultClass()
+    private let filters = Filters()
+    private let databaseUserDefault = UserDefaultClass()
+    private var news = [DataCellTable]()
     private var numberAllNewsOnRequest = 0
-    
+    @IBOutlet weak var indicator: UIActivityIndicatorView!
+
     override func viewDidLoad() {
         super.viewDidLoad()
         indicator.startAnimating()
@@ -43,12 +42,13 @@ class LoadingViewController: UIViewController {
     
     private func replaceSourcesList(sourcesList: [String]? ) {
         guard let sourcesList = sourcesList else { return }
-        var savedFilters = Filters()
-        savedFilters = self.databaseUserDefault.readSavedFilters(titles: ParametersFilters.titles)
-        savedFilters.updateSourcesFilter(downloadedListSources: sourcesList)
-        self.databaseUserDefault.setFilters(filters: savedFilters)
+        var savedFiltersObject = Filters()
+        savedFiltersObject = self.databaseUserDefault.readSavedFilters(titles: ParametersFilters.titles)
+        savedFiltersObject.updateSourcesFilter(downloadedListSources: sourcesList)
+        self.databaseUserDefault.setFilters(filters: savedFiltersObject)
         if let index = ParametersFilters.titles.firstIndex(of: ParametrsRequestNewsApi.sources.rawValue) {
-            ParametersFilters.lists[index] = savedFilters.filters[index].list
+            let filters = savedFiltersObject.getFilters()
+            ParametersFilters.lists[index] = filters[index].getList()
         }
     }
     
@@ -56,8 +56,8 @@ class LoadingViewController: UIViewController {
         networkManager.getNewsRequest(filters: filters, page: 1, search: nil) { result, error in
             DispatchQueue.main.async {
                 if let result = result, error == nil {
-                    self.news = result.newNews
-                    self.numberAllNewsOnRequest = result.numberAllNewsOnRequest
+                    self.news = result.getNews()
+                    self.numberAllNewsOnRequest = result.getNumberAllNewsOnRequest()
                     self.prepareAndLaunchMainViewController()
                 } else {
                     guard let error = error else { return }
@@ -70,10 +70,7 @@ class LoadingViewController: UIViewController {
     
     private func prepareAndLaunchMainViewController() {
         guard let controler = self.storyboard?.instantiateViewController(identifier: "MainViewController") as? MainViewController else { return }
-        controler.news = self.news
-        controler.filters = self.filters
-        controler.numberAllNewsOnRequest = self.numberAllNewsOnRequest
-        controler.databaseUserDefault = databaseUserDefault
+        controler.setData(news: news, filters: filters, numberAllNewsOnRequest: numberAllNewsOnRequest, databaseUserDefault: databaseUserDefault)
         self.navigationController?.pushViewController(controler, animated: true)
     }
 }

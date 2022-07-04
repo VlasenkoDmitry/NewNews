@@ -11,7 +11,7 @@ struct NetworkManager {
     let router = Router()
     
     func getNewsRequest (filters: Filters, page: Int, search: String?, complition: @escaping (NewsRequests?,Error?) -> ()) {
-        let news = NewsRequests()
+        let requestBase = NewsRequests()
         if let request = APIRequestManager.getRequestNews(filters: filters, page: page, search: search).buildRequest(){
             print(request)
             router.request(from: request) { result, error in
@@ -19,12 +19,12 @@ struct NetworkManager {
                     do {
                         if let json = try JSONSerialization.jsonObject(with: result) as? [String: Any] {
                             if let totalResults = json["totalResults"] as? Int {
-                                news.numberAllNewsOnRequest = totalResults
+                                requestBase.saveNumberAllNewsOnRequest(number: totalResults)
                             }
                             if let articles = json["articles"] as? [[String: Any]] {
-                                news.newNews = parsingJSONDataCellTable(articles: articles)
+                                requestBase.saveNews(news: parsingJSONDataCellTable(articles: articles))
                             }
-                            complition(news, nil)
+                            complition(requestBase, nil)
                         }
                     } catch {
                         complition(nil, LoadingError.parseFailure(error))
@@ -72,7 +72,15 @@ struct NetworkManager {
     func downloadImage(link: String, completion: @escaping (Data?) -> ()) {
         if let urlRequest = link.getUrlRequest() {
             router.request(from: urlRequest) { result, error in
-                completion(result)
+                if let result = result, error == nil {
+                    completion(result)
+                } else {
+                    if let error = error {
+                        print(error.localizedDescription)
+                    }
+                    completion(nil)
+                }
+                
             }
         }
     }
@@ -81,22 +89,12 @@ struct NetworkManager {
     private func parsingJSONDataCellTable(articles: [[String: Any]]) -> [DataCellTable] {
         var data = [DataCellTable]()
         for article in articles {
-            let news = DataCellTable(image: nil, imageLink: "", author: "", title: "", descript: "", link: "")
-            if let imageLink = article["urlToImage"] as? String {
-                news.imageLink = imageLink
-            }
-            if let author = article["author"] as? String {
-                news.author = author
-            }
-            if let title = article["title"] as? String {
-                news.title = title
-            }
-            if let description = article["description"] as? String {
-                news.descript = description
-            }
-            if let urlString = article["url"] as? String {
-                news.link = urlString
-            }
+            let imageLink = article["urlToImage"] as? String ?? "unknown"
+            let author = article["author"] as? String ?? "unknown"
+            let title = article["title"] as? String ?? "unknown"
+            let description = article["description"] as? String ?? "unknown"
+            let urlString = article["url"] as? String ?? "unknown"
+            let news = DataCellTable(image: nil, imageLink: imageLink, author: author, title: title, descript: description, link: urlString)
             data.append(news)
         }
         return data

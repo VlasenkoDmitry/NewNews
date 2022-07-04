@@ -1,4 +1,5 @@
 import Foundation
+import RealmSwift
 
 protocol RealmBase {
     func realmFile()

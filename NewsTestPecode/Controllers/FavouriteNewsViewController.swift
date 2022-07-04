@@ -2,13 +2,12 @@ import UIKit
 
 class FavouriteNewsViewController: UIViewController {
     
+    private var news: [NewsRealmData] = []
+    private var databaseRealm: RealmClass?
+    weak var delegate: FavouriteNewsViewControllerDelegate?
     @IBOutlet weak var backButton: UIButton!
     @IBOutlet weak var cleanAllButton: UIButton!
     @IBOutlet weak var tableView: UITableView!
-    
-    weak var delegate: FavouriteNewsViewControllerDelegate?
-    private var news: [NewsRealmData] = []
-    var databaseRealm: RealmClass?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,6 +29,10 @@ class FavouriteNewsViewController: UIViewController {
         if let news = databaseRealm?.getAllObjectsNewsRealmData() {
             self.news = news
         }
+    }
+    
+    func setDatabase(dataBase: RealmClass?) {
+        self.databaseRealm = dataBase
     }
 }
 

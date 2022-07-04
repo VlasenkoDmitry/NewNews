@@ -1,7 +1,7 @@
 import Foundation
 
 class Filters: FiltersProtocol {
-    var filters = [Filter]()
+    private var filters = [Filter]()
     
     init() {
         for element in 0..<ParametersFilters.titles.count {
@@ -12,14 +12,14 @@ class Filters: FiltersProtocol {
     }
     
     func setNewSettingsFilter(addedFilter: Filter) {
-        for filter in filters where filter.title == addedFilter.title {
-            filter.listCheck = addedFilter.listCheck
+        for filter in filters where filter.getTitle() == addedFilter.getTitle() {
+            filter.setListCheck(listCheck: addedFilter.getListCheck())
         }
     }
     
     func updateFilters(changedFilter: Filter) {
         for filter in filters {
-            if filter.title == changedFilter.title, filter.listCheck != changedFilter.listCheck {
+            if filter.getTitle() == changedFilter.getTitle(), filter.getListCheck() != changedFilter.getListCheck() {
                 changeIncompatibleFilters(changeble: changedFilter)
             }
         }
@@ -29,7 +29,7 @@ class Filters: FiltersProtocol {
     func checkAtLeastOneActiveFilter() -> Bool{
         var mainChecker = Set<Bool>()
         for filter in filters {
-            let newChecker = Set(filter.listCheck.map { $0 })
+            let newChecker = Set(filter.getListCheck().map { $0 })
             mainChecker = mainChecker.union(newChecker)
         }
         if mainChecker.contains(true) == false {
@@ -41,17 +41,17 @@ class Filters: FiltersProtocol {
     
     /// We can't mix sources param with the country or category params.
     private func changeIncompatibleFilters(changeble: Filter) {
-        switch changeble.title {
+        switch changeble.getTitle() {
         case ParametrsRequestNewsApi.sources.rawValue:
             for filter in filters {
-                if filter.title == ParametrsRequestNewsApi.category.rawValue || filter.title == ParametrsRequestNewsApi.country.rawValue {
-                    filter.listCheck = Array(repeating: false, count: filter.list.count)
+                if filter.getTitle() == ParametrsRequestNewsApi.category.rawValue || filter.getTitle() == ParametrsRequestNewsApi.country.rawValue {
+                    filter.setListCheck(listCheck: Array(repeating: false, count: filter.getList().count))
                 }
             }
         case ParametrsRequestNewsApi.category.rawValue, ParametrsRequestNewsApi.country.rawValue:
             for filter in filters {
-                if filter.title == ParametrsRequestNewsApi.sources.rawValue {
-                    filter.listCheck = Array(repeating: false, count: filter.list.count)
+                if filter.getTitle() == ParametrsRequestNewsApi.sources.rawValue {
+                    filter.setListCheck(listCheck: Array(repeating: false, count: filter.getList().count))
                 }
             }
         default:
@@ -65,21 +65,21 @@ class Filters: FiltersProtocol {
         var parameters = Parameters()
         for filter in filters {
             var array: [String] = []
-            for num in 0..<filter.list.count{
-                if filter.listCheck[num] {
-                    array.append(filter.list[num])
+            for num in 0..<filter.getList().count{
+                if filter.getListCheck()[num] {
+                    array.append(filter.getList()[num])
                 }
             }
             if array.count > 0 {
-                parameters[filter.title] = array.joined(separator:",")
+                parameters[filter.getTitle()] = array.joined(separator:",")
             }
         }
         return parameters
     }
     
     func updateSourcesFilter(downloadedListSources: [String]) {
-        guard let oldList = filters.first(where: { $0.title == ParametrsRequestNewsApi.sources.rawValue })?.list else { return }
-        guard let oldCheckList = filters.first(where: { $0.title == ParametrsRequestNewsApi.sources.rawValue })?.listCheck else { return }
+        guard let oldList = filters.first(where: { $0.getTitle() == ParametrsRequestNewsApi.sources.rawValue })?.getList() else { return }
+        guard let oldCheckList = filters.first(where: { $0.getTitle() == ParametrsRequestNewsApi.sources.rawValue })?.getListCheck() else { return }
         var resultList: [String] = []
         var resultCheckList: [Bool] = []
         for source in downloadedListSources {
@@ -95,8 +95,8 @@ class Filters: FiltersProtocol {
                 resultCheckList.append(false)
             }
         }
-        filters.first(where: { $0.title == ParametrsRequestNewsApi.sources.rawValue })?.list = resultList
-        filters.first(where: { $0.title == ParametrsRequestNewsApi.sources.rawValue })?.listCheck = resultCheckList
+        filters.first(where: { $0.getTitle() == ParametrsRequestNewsApi.sources.rawValue })?.setList(list: resultList)
+        filters.first(where: { $0.getTitle() == ParametrsRequestNewsApi.sources.rawValue })?.setListCheck(listCheck: resultCheckList)
     }
     
     func fillSourcesFilterSavedData() {
@@ -105,13 +105,19 @@ class Filters: FiltersProtocol {
         /// Check the installed filters. If they are not present, we will add one filter. We should add at least one filter on demand API
         var mainChecker = Set<Bool>()
         for filter in filters {
-            let newChecker = Set(filter.listCheck.map { $0 })
+            let newChecker = Set(filter.getListCheck().map { $0 })
             mainChecker = mainChecker.union(newChecker)
         }
         if mainChecker.contains(true) == false {
-            filters[0].listCheck[0] = true
-            filters.first(where: {$0.title == ParametrsRequestNewsApi.sources.rawValue})?.listCheck[0] = true
+//            filters[0].listCheck[0] = true
+            filters[0].setCheckToIndex(check: true, index: 0)
+//            filters.first(where: {$0.getTitle() == ParametrsRequestNewsApi.sources.rawValue})?.listCheck[0] = true
+            filters.first(where: {$0.getTitle() == ParametrsRequestNewsApi.sources.rawValue})?.setCheckToIndex(check: true, index: 0)
         }
+    }
+    
+    func getFilters() -> [Filter] {
+        return filters
     }
     
 }
