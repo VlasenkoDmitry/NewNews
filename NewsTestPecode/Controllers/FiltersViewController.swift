@@ -13,7 +13,6 @@ class FiltersViewController: UIViewController {
         addSectionsInModels()
     }
     
-    /// Filling models to display sections and filters in tableView
     private func addSectionsInModels() {
         models.append(Section(title: "", options: [
             SettingsOption(title: ParametrsRequestNewsApi.sources.rawValue, handler: { [self] in

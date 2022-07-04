@@ -27,7 +27,7 @@ class MainViewController: UIViewController {
         filters.fillSourcesFilterSavedData()
     }
     
-    /// Loading news and reloading tableview after user request(button reload and refreshControll)
+    ///after user request(button reload and refreshControll)
     func reloadDataTableViewAndTableView() {
         networkManager.getNewsRequest(filters: filters, page: 1, search: searshBar.text)  { [weak self] result, error  in
             DispatchQueue.main.async {
@@ -121,10 +121,8 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         cell.delegate = self
         if databaseRealm.checkNews(data: self.news[indexPath.row]) {
             cell.customView.notesBotton.isSelected = true
-            //            cell.likeButton.isSelected = true
         } else {
             cell.customView.notesBotton.isSelected = false
-            //            cell.likeButton.isSelected = false
         }
         return cell
     }

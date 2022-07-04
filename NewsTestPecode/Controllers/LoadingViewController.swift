@@ -51,7 +51,7 @@ class LoadingViewController: UIViewController {
             ParametersFilters.lists[index] = savedFilters.filters[index].list
         }
     }
-    /// Loading news to display the first news after turning on the app
+    
     private func loadNews() {
         networkManager.getNewsRequest(filters: filters, page: 1, search: nil) { result, error in
             DispatchQueue.main.async {
@@ -68,7 +68,6 @@ class LoadingViewController: UIViewController {
         }
     }
     
-    /// Opening the main screen after successfully downloading news, transferring links of main data(an array of downloaded news, downloaded filters from the Realm database, the number of news in the request without a limit (to understand how much news we can theoretically download, a link to the filter database) )
     private func prepareAndLaunchMainViewController() {
         guard let controler = self.storyboard?.instantiateViewController(identifier: "MainViewController") as? MainViewController else { return }
         controler.news = self.news
